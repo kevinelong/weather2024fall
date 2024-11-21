@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather</title>
+</head>
+
+<body>
+    <h1>Weather</h1>
+    <select id="citySelect">
+        <option value="">Select a city</option>
+    </select>
+    <div id="resultsOutput">?</div>
+    <script>
+        let cities = [
+            {
+                name: "Benbrook, TX",
+                latitude: 32.6732,
+                longitude: -97.4606
+            },
+            {
+                name: "Columbia City, OR",
+                latitude: 45.8945164,
+                longitude: -122.8350264
+            },
+        ];
+        // cities.forEach(c => citySelect.appendChild(new Option(c.name, `${c.latitude},${c.longitude}`)));
+        cities.forEach(c => citySelect.appendChild(new Option(c.name, encodeURIComponent(JSON.stringify(c))))); //convert js obj to a string of text
+
+        citySelect.addEventListener("change", e => {
+            //resultsOutput.innerText = citySelect.value;
+            const c = JSON.parse(decodeURIComponent(citySelect.value)); //convert string text back to binary object(s)
+            const latLng = `${c.latitude},${c.longitude}`;
+            resultsOutput.innerText = latLng;
+        });
+
+    </script>
+</body>
+
+</html>
