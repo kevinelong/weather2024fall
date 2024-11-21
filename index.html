@@ -29,11 +29,25 @@
         // cities.forEach(c => citySelect.appendChild(new Option(c.name, `${c.latitude},${c.longitude}`)));
         cities.forEach(c => citySelect.appendChild(new Option(c.name, encodeURIComponent(JSON.stringify(c))))); //convert js obj to a string of text
 
-        citySelect.addEventListener("change", e => {
+        citySelect.addEventListener("change", async e => {
             //resultsOutput.innerText = citySelect.value;
             const c = JSON.parse(decodeURIComponent(citySelect.value)); //convert string text back to binary object(s)
             const latLng = `${c.latitude},${c.longitude}`;
-            resultsOutput.innerText = latLng;
+            const urlEndpointResource = "https://api.weather.gov/points/" + latLng;
+            //make a HTTP (web restful api) request using a url and the default verb GET
+            const resp = await fetch(urlEndpointResource);
+            const data = await resp.json(); //this is a built in method of the response object
+            //NOTE: we are not using the built in object and method JSON.parse(), but response.json() probably is.
+
+            const secondaryURL = data.properties.forecast;
+            const resp2 = await fetch(secondaryURL);
+            const data2 = await resp2.json();
+            resultsOutput.innerHTML = data2.properties.periods.map(p => `
+                <hr>
+                <h2>${p.name}:</h2>
+                <p>${p.detailedForecast}</p>
+                <img src="${p.icon}">
+            `).join('');
         });
 
     </script>
